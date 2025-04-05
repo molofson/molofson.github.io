@@ -1,10 +1,187 @@
-<!doctype html>
-<html>
-  <head>
-    <title>This is the title of the webpage!</title>
-  </head>
-  <body>
-    <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faith or Just Morally Good? Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #6200ea;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #3700b3;
+    }
+    .result {
+      display: none;
+      margin-top: 20px;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .share {
+      margin-top: 20px;
+    }
+    .share button {
+      background-color: #03dac5;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Faithful Firebrand or Morally Good?</h1>
+    <div class="question" id="question"></div>
+    <div id="answers"></div>
+    <div class="result" id="result">
+      <h2 id="resultText"></h2>
+      <img id="resultGif" src="" alt="Result GIF">
+      <div class="share">
+        <button onclick="share('twitter')">Share on Twitter</button>
+        <button onclick="share('copy')">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const quiz = [
+      {
+        question: "You see someone drop their wallet. What’s your move?",
+        answers: [
+          { text: "Return it, whisper 'WWJD'.", type: "A" },
+          { text: "Return it, like a normal person.", type: "B" },
+          { text: "Ignore it. Divine judgment will sort this out.", type: "C" }
+        ]
+      },
+      {
+        question: "You get invited to Sunday brunch and Sunday church. Pick one:",
+        answers: [
+          { text: "Church, obviously.", type: "A" },
+          { text: "Brunch, duh.", type: "B" },
+          { text: "Sleep.", type: "C" }
+        ]
+      },
+      {
+        question: "You hear someone swear loudly in public. Your response?",
+        answers: [
+          { text: "Gasp. 'I'll pray for you.'", type: "A" },
+          { text: "Nothing. Freedom of expression.", type: "B" },
+          { text: "Join in. Life's too short.", type: "C" }
+        ]
+      },
+      {
+        question: "You see a charity donation box. What do you do?",
+        answers: [
+          { text: "Donate, and make sure people notice.", type: "A" },
+          { text: "Donate quietly.", type: "B" },
+          { text: "Shake it to see if there's change for you.", type: "C" }
+        ]
+      },
+      {
+        question: "Your coworker is going through a hard time. Your reply?",
+        answers: [
+          { text: "I'll pray for you every day.", type: "A" },
+          { text: "That sounds tough, I'm here for you.", type: "B" },
+          { text: "Yeah, we're all struggling, buddy.", type: "C" }
+        ]
+      }
+    ];
+
+    const gifs = {
+      A: ["https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif"],
+      B: ["https://media.giphy.com/media/3oEduSbSGpGaRX2Vri/giphy.gif"],
+      C: ["https://media.giphy.com/media/3o7TKyTKTK4Y1VoeLu/giphy.gif"]
+    };
+
+    let currentQuestion = 0;
+    let counts = { A: 0, B: 0, C: 0 };
+
+    function showQuestion() {
+      const q = quiz[currentQuestion];
+      document.getElementById('question').innerText = q.question;
+      const answersDiv = document.getElementById('answers');
+      answersDiv.innerHTML = '';
+      q.answers.forEach(answer => {
+        const btn = document.createElement('button');
+        btn.innerText = answer.text;
+        btn.onclick = () => selectAnswer(answer.type);
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(type) {
+      counts[type]++;
+      currentQuestion++;
+      if (currentQuestion < quiz.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('question').style.display = 'none';
+      document.getElementById('answers').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+
+      const max = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+      let resultText = '';
+      switch (max) {
+        case 'A':
+          resultText = '🔥 Faithful Firebrand!';
+          break;
+        case 'B':
+          resultText = '🌟 Frustratingly Decent Human!';
+          break;
+        case 'C':
+          resultText = '🛋️ Spiritual Couch Potato!';
+          break;
+      }
+      document.getElementById('resultText').innerText = resultText;
+      const gifArray = gifs[max];
+      document.getElementById('resultGif').src = gifArray[Math.floor(Math.random() * gifArray.length)];
+    }
+
+    function share(platform) {
+      const url = window.location.href;
+      const text = 'I just took the "Faith vs. Morally Good" quiz and got my result! 🎉';
+      if (platform === 'twitter') {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
+      } else if (platform === 'copy') {
+        navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      }
+    }
+
+    showQuestion();
+  </script>
+</body>
 </html>
 
